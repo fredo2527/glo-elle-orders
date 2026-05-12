@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#b8275a" />
+  <title>Order — Glo & Elle Bakehouse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #fce8ee;
+      --bg-light: #fff0f4;
+      --berry:    #b8275a;
+      --berry-dk: #8e1a42;
+      --rose:     #e07090;
+      --rose-lt:  #f5b8cb;
+      --blush:    #fad4df;
+      --white:    #ffffff;
+      --body-txt: #6b2040;
+      --muted:    #c4788f;
+      --green:    #2e7d52;
+      --green-bg: #edf7f2;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--body-txt);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: radial-gradient(circle, var(--rose-lt) 1px, transparent 1px);
+      background-size: 22px 22px;
+      opacity: 0.28;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Lang bar ── */
+    .lang-bar {
+      position: relative; z-index: 10;
+      background: var(--berry-dk);
+      display: flex; justify-content: flex-end; align-items: center;
+      padding: 0.5rem 1.1rem; gap: 0.4rem;
+    }
+    .lang-label { font-size: 0.7rem; color: var(--rose-lt); letter-spacing: 0.1em; text-transform: uppercase; margin-right: 0.3rem; }
+    .lang-btn {
+      background: transparent; border: 1.5px solid var(--rose-lt); color: var(--rose-lt);
+      font-family: 'DM Sans', sans-serif; font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.08em; padding: 0.3rem 0.75rem; border-radius: 20px;
+      cursor: pointer; transition: background .18s, color .18s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .lang-btn.active { background: var(--rose-lt); color: var(--berry-dk); }
+
+    /* ── Header ── */
+    header {
+      position: relative; z-index: 1;
+      background: var(--berry);
+      padding: clamp(1.8rem,5vw,2.8rem) 1.2rem clamp(1.6rem,4vw,2.4rem);
+      text-align: center; overflow: hidden;
+    }
+    header::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% -10%, #e07090aa 0%, transparent 65%);
+      pointer-events: none;
+    }
+    header::after {
+      content: '♥  ♥  ♥'; position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+      font-size: 0.5rem; letter-spacing: 0.55rem; color: var(--rose-lt); opacity: 0.55;
+    }
+    .logo-circle {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: clamp(64px,18vw,82px); height: clamp(64px,18vw,82px);
+      background: var(--blush); border: 2px solid var(--rose-lt); border-radius: 50%;
+      margin-bottom: 0.85rem;
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: clamp(0.82rem,2.5vw,1rem); color: var(--berry); line-height: 1.15; text-align: center;
+      box-shadow: 0 4px 22px rgba(184,39,90,.28);
+    }
+    header h1 {
+      font-family: 'Cormorant Garamond', serif; font-weight: 600; font-style: italic;
+      font-size: clamp(1.9rem,9vw,3.4rem); color: var(--white); line-height: 1.05;
+    }
+    header h1 .amp { color: var(--rose-lt); font-style: normal; }
+    .header-sub { margin-top: 0.45rem; font-size: clamp(0.65rem,2vw,0.75rem); color: var(--blush); letter-spacing: 0.2em; text-transform: uppercase; }
+    .header-tagline { margin-top: 0.45rem; font-size: clamp(0.78rem,2.5vw,0.88rem); color: var(--rose-lt); font-family: 'Cormorant Garamond', serif; font-style: italic; opacity: 0.85; }
+
+    /* ── Notice ── */
+    .notice {
+      position: relative; z-index: 1;
+      background: var(--white); border: 1.5px solid var(--rose-lt); border-left: 4px solid var(--berry);
+      margin: 1.4rem auto; max-width: 640px; padding: 0.9rem 1.1rem;
+      border-radius: 0 10px 10px 0; font-size: clamp(0.8rem,3vw,0.85rem); color: var(--body-txt); line-height: 1.65;
+    }
+    .notice strong { color: var(--berry); }
+
+    /* ── Wrap ── */
+    .form-wrap {
+      position: relative; z-index: 1;
+      max-width: 640px; margin: 0 auto clamp(2.5rem,8vw,4rem);
+      padding: 0 clamp(0.9rem,4vw,1.25rem);
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--white); border-radius: 16px;
+      padding: clamp(1.4rem,5vw,2rem) clamp(1.2rem,5vw,1.8rem);
+      box-shadow: 0 2px 24px rgba(184,39,90,.07), 0 0 0 1px var(--rose-lt);
+      margin-bottom: 1.1rem;
+      animation: fadeUp 0.4s ease both;
+    }
+    .card:nth-child(2) { animation-delay: .07s; }
+    .card:nth-child(3) { animation-delay: .14s; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+    .card-title {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: clamp(1rem,4vw,1.15rem); color: var(--berry);
+      margin-bottom: 1.25rem; padding-bottom: 0.6rem; border-bottom: 1px dashed var(--rose-lt);
+    }
+    .card-title::before { content: '♥ '; font-size: 0.7em; opacity: 0.55; }
+
+    /* ── Fields ── */
+    .field { margin-bottom: 1.05rem; }
+    label {
+      display: block; font-size: clamp(0.68rem,2.5vw,0.74rem); font-weight: 500;
+      color: var(--muted); margin-bottom: 0.38rem; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    label span.req { color: var(--berry); margin-left: 2px; }
+    input, select, textarea {
+      width: 100%; background: var(--bg-light); border: 1.5px solid var(--rose-lt); border-radius: 10px;
+      padding: 0.8rem 0.95rem; font-family: 'DM Sans', sans-serif; font-size: 16px;
+      color: var(--berry-dk); transition: border-color .2s, box-shadow .2s, background .2s;
+      outline: none; appearance: none; -webkit-appearance: none;
+    }
+    input::placeholder, textarea::placeholder { color: #f0afc0; }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--berry); box-shadow: 0 0 0 3px rgba(184,39,90,.1); background: var(--white);
+    }
+    textarea { min-height: 90px; resize: vertical; line-height: 1.5; }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23e07090' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 0.9rem center;
+      padding-right: 2.4rem; cursor: pointer;
+    }
+    .row-2 { display: grid; grid-template-columns: 1fr; gap: 0; }
+    @media (min-width: 480px) {
+      .row-2 { grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .row-2 .field { margin-bottom: 0; }
+    }
+
+    /* ── Order item rows ── */
+    .item-row {
+      background: var(--bg-light); border: 1.5px solid var(--rose-lt); border-radius: 12px;
+      padding: 1rem 1rem 0.85rem; margin-bottom: 0.85rem;
+    }
+    .item-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 0.7rem; flex-wrap: wrap; gap: 0.4rem;
+    }
+    .item-name {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: clamp(0.95rem,3.5vw,1.05rem); color: var(--berry); font-weight: 600;
+    }
+    .item-price-tag {
+      background: var(--berry); color: var(--white);
+      font-size: 0.75rem; font-weight: 500; padding: 0.2rem 0.65rem;
+      border-radius: 20px; letter-spacing: 0.04em; white-space: nowrap;
+    }
+    .item-flavors { margin-bottom: 0.65rem; }
+
+    /* ── Flavor pills ── */
+    .flavor-group { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.4rem; }
+    .flavor-pill {
+      display: flex; align-items: center; gap: 0.3rem;
+      background: var(--white); border: 1.5px solid var(--rose-lt); border-radius: 20px;
+      padding: 0.35rem 0.75rem; cursor: pointer; transition: border-color .18s, background .18s;
+      -webkit-tap-highlight-color: transparent; user-select: none;
+    }
+    .flavor-pill input[type=checkbox] { display: none; }
+    .flavor-pill .pill-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      border: 1.5px solid var(--rose-lt); flex-shrink: 0; transition: all .18s;
+    }
+    .flavor-pill.selected { background: var(--blush); border-color: var(--berry); }
+    .flavor-pill.selected .pill-dot { background: var(--berry); border-color: var(--berry); }
+    .flavor-pill span { font-size: clamp(0.78rem,3vw,0.84rem); color: var(--body-txt); }
+
+    /* ── Qty stepper ── */
+    .qty-row { display: flex; align-items: center; gap: 0.7rem; margin-top: 0.6rem; }
+    .qty-label-sm { font-size: clamp(0.68rem,2.5vw,0.72rem); color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+    .qty-stepper { display: flex; align-items: center; gap: 0; border: 1.5px solid var(--rose-lt); border-radius: 8px; overflow: hidden; }
+    .qty-btn {
+      background: var(--bg-light); border: none; color: var(--berry);
+      font-size: 1.1rem; font-weight: 500; width: 38px; height: 38px;
+      cursor: pointer; transition: background .15s; display: flex; align-items: center; justify-content: center;
+      -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+    }
+    .qty-btn:active { background: var(--blush); }
+    .qty-val {
+      min-width: 36px; text-align: center; font-size: 0.95rem;
+      font-weight: 500; color: var(--berry-dk); padding: 0 4px;
+      border-left: 1px solid var(--rose-lt); border-right: 1px solid var(--rose-lt);
+      height: 38px; line-height: 38px;
+    }
+
+    /* ── Order summary ── */
+    .order-summary {
+      background: var(--bg-light); border: 1.5px solid var(--rose-lt); border-radius: 12px;
+      padding: 1rem 1.1rem; margin-top: 0.5rem;
+    }
+    .summary-title {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 0.95rem; color: var(--berry); margin-bottom: 0.65rem;
+    }
+    .summary-line {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-size: clamp(0.78rem,3vw,0.84rem); color: var(--body-txt);
+      padding: 0.25rem 0; border-bottom: 1px dashed #f5d0da;
+    }
+    .summary-line:last-of-type { border-bottom: none; }
+    .summary-line .s-name { flex: 1; }
+    .summary-line .s-amt { font-weight: 500; color: var(--berry-dk); margin-left: 0.5rem; white-space: nowrap; }
+    .summary-divider { border: none; border-top: 1.5px solid var(--rose-lt); margin: 0.6rem 0; }
+    .summary-total {
+      display: flex; justify-content: space-between;
+      font-size: clamp(0.9rem,3.5vw,1rem); font-weight: 500; color: var(--berry-dk);
+      padding-top: 0.25rem;
+    }
+    .deposit-box {
+      margin-top: 0.7rem; background: var(--green-bg);
+      border: 1.5px solid #a8d5be; border-radius: 10px; padding: 0.75rem 1rem;
+    }
+    .deposit-row { display: flex; justify-content: space-between; align-items: center; }
+    .deposit-label { font-size: clamp(0.78rem,3vw,0.84rem); color: var(--green); font-weight: 500; }
+    .deposit-amt { font-size: clamp(1rem,4vw,1.15rem); font-weight: 600; color: var(--green); }
+    .deposit-note { font-size: 0.72rem; color: #4a9e72; margin-top: 0.3rem; line-height: 1.5; }
+
+    .empty-cart {
+      text-align: center; color: var(--muted); font-size: 0.84rem;
+      font-style: italic; padding: 0.5rem 0 0.25rem;
+    }
+
+    /* ── Submit ── */
+    .btn-submit {
+      width: 100%; background: var(--berry); color: var(--white);
+      border: none; border-radius: 12px; padding: 1.1rem;
+      font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
+      transition: background .2s, box-shadow .2s; margin-top: 0.4rem;
+      box-shadow: 0 4px 18px rgba(184,39,90,.3); min-height: 52px;
+      -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+    }
+    .btn-submit:hover  { background: var(--berry-dk); box-shadow: 0 6px 24px rgba(184,39,90,.36); }
+    .btn-submit:active { transform: scale(0.985); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .fine-print { text-align: center; font-size: clamp(0.7rem,2.5vw,0.75rem); color: var(--muted); margin-top: 0.85rem; line-height: 1.65; padding: 0 0.5rem; }
+
+    /* ── Success ── */
+    #success-msg { display: none; text-align: center; padding: clamp(1.8rem,6vw,2.5rem) 1.2rem; }
+    #success-msg .icon { font-size: 2.4rem; margin-bottom: 0.75rem; }
+    #success-msg h2 { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(1.5rem,6vw,1.9rem); color: var(--berry); margin-bottom: 0.5rem; }
+    #success-msg p { color: var(--muted); font-size: clamp(0.82rem,3vw,0.88rem); line-height: 1.75; }
+    .conf-badge {
+      display: inline-block; margin-top: 1rem; background: var(--bg);
+      border: 1.5px solid var(--rose-lt); color: var(--berry);
+      font-family: 'Cormorant Garamond', serif; font-size: clamp(1rem,4vw,1.2rem); font-style: italic;
+      padding: 0.55rem 1.3rem; border-radius: 30px; letter-spacing: 0.06em; word-break: break-all;
+    }
+    .deposit-confirm {
+      margin-top: 1rem; background: var(--green-bg); border: 1.5px solid #a8d5be;
+      border-radius: 10px; padding: 0.85rem 1rem; text-align: left;
+    }
+    .deposit-confirm .dc-title { font-size: 0.8rem; color: var(--green); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+    .deposit-confirm .dc-amt  { font-size: 1.4rem; font-weight: 700; color: var(--green); }
+    .deposit-confirm .dc-note { font-size: 0.76rem; color: #4a9e72; margin-top: 0.3rem; line-height: 1.5; }
+
+    /* ── Spinner ── */
+    .spinner { display: none; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,.35); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    footer { position: relative; z-index: 1; text-align: center; padding: 1.5rem 1rem; font-size: 0.75rem; color: var(--muted); }
+    footer a { color: var(--berry); text-decoration: none; }
+
+    .notice { animation: fadeUp 0.3s ease both; }
+  </style>
+</head>
+<body>
+
+<div class="lang-bar">
+  <span class="lang-label" id="langLabel">Language:</span>
+  <button class="lang-btn active" id="btnEN" onclick="setLang('en')">EN</button>
+  <button class="lang-btn"        id="btnES" onclick="setLang('es')">ES</button>
+</div>
+
+<header>
+  <div class="logo-circle">Glo<br><span class="amp">&</span><br>Elle</div>
+  <h1>Glo <span class="amp">&</span> Elle<br>Bakehouse</h1>
+  <p class="header-sub"    id="hdrSub">Custom Dessert Orders</p>
+  <p class="header-tagline">Where every loaf feels homemade</p>
+</header>
+
+<div class="form-wrap">
+
+  <div class="notice">
+    <strong id="noticeTitle">Deposit Policy:</strong>
+    <span id="noticeText"> A 50% non-refundable deposit via Zelle is required to confirm your order. Deposit details will be emailed to you after submitting. Orders are not confirmed until deposit is received.</span>
+  </div>
+
+  <form id="orderForm" novalidate>
+
+    <!-- ── Card 1: Info ── -->
+    <div class="card">
+      <p class="card-title" id="card1Title">Your Information</p>
+      <div class="field">
+        <label id="lblName">Full Name <span class="req">*</span></label>
+        <input type="text" name="name" required id="inName" placeholder="Jane Smith" autocomplete="name" />
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label id="lblEmail">Email <span class="req">*</span></label>
+          <input type="email" name="email" required id="inEmail" placeholder="jane@email.com" autocomplete="email" />
+        </div>
+        <div class="field">
+          <label id="lblPhone">Phone <span class="req">*</span></label>
+          <input type="tel" name="phone" required id="inPhone" placeholder="(555) 555-5555" autocomplete="tel" />
+        </div>
+      </div>
+      <div class="field">
+        <label id="lblDate">Pickup / Delivery Date <span class="req">*</span></label>
+        <input type="date" name="date" required id="inDate" />
+      </div>
+      <div class="field">
+        <label id="lblSource">How did you find us?</label>
+        <select name="source" id="inSource">
+          <option value="" id="srcDefault">Select one…</option>
+          <option id="srcIG">Instagram</option>
+          <option id="srcRef">Friend / Referral</option>
+          <option id="srcGoogle">Google</option>
+          <option id="srcFB">Facebook</option>
+          <option id="srcReturn">Returning customer</option>
+          <option id="srcOther">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- ── Card 2: Menu ── -->
+    <div class="card">
+      <p class="card-title" id="card2Title">Choose Your Items</p>
+
+      <!-- Bento Cake -->
+      <div class="item-row" id="rowBento">
+        <div class="item-header">
+          <span class="item-name" id="nameBento">Bento Cake</span>
+          <span class="item-price-tag">$14 each</span>
+        </div>
+        <div class="item-flavors">
+          <label id="lblFlavorBento" style="margin-bottom:0.3rem;">Flavor(s)</label>
+          <div class="flavor-group" id="flavorsBento">
+            <label class="flavor-pill">
+              <input type="checkbox" name="bento_chocolate" value="Chocolate">
+              <span class="pill-dot"></span><span id="flBentoChoc">Chocolate</span>
+            </label>
+            <label class="flavor-pill">
+              <input type="checkbox" name="bento_tresleches" value="Tres Leches">
+              <span class="pill-dot"></span><span id="flBentoTL">Tres Leches</span>
+            </label>
+          </div>
+        </div>
+        <div class="qty-row">
+          <span class="qty-label-sm" id="lblQtyBento">Qty:</span>
+          <div class="qty-stepper">
+            <button type="button" class="qty-btn" onclick="changeQty('bento',-1)">−</button>
+            <div class="qty-val" id="qtyValBento">0</div>
+            <button type="button" class="qty-btn" onclick="changeQty('bento',1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tres Leches Loaf -->
+      <div class="item-row" id="rowLoaf">
+        <div class="item-header">
+          <span class="item-name" id="nameLoaf">Tres Leches Loaf</span>
+          <span class="item-price-tag">$7 each</span>
+        </div>
+        <div class="qty-row">
+          <span class="qty-label-sm" id="lblQtyLoaf">Qty:</span>
+          <div class="qty-stepper">
+            <button type="button" class="qty-btn" onclick="changeQty('loaf',-1)">−</button>
+            <div class="qty-val" id="qtyValLoaf">0</div>
+            <button type="button" class="qty-btn" onclick="changeQty('loaf',1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6" Cake -->
+      <div class="item-row" id="rowCake6">
+        <div class="item-header">
+          <span class="item-name" id="nameCake6">6" Cake w/ Gold Topper</span>
+          <span class="item-price-tag">$50 each</span>
+        </div>
+        <div class="item-flavors">
+          <label id="lblFlavorCake6" style="margin-bottom:0.3rem;">Flavor(s)</label>
+          <div class="flavor-group" id="flavorsCake6">
+            <label class="flavor-pill">
+              <input type="checkbox" name="cake6_tresleches" value="Tres Leches">
+              <span class="pill-dot"></span><span id="flCake6TL">Tres Leches</span>
+            </label>
+            <label class="flavor-pill">
+              <input type="checkbox" name="cake6_chocolate" value="Chocolate">
+              <span class="pill-dot"></span><span id="flCake6Choc">Chocolate</span>
+            </label>
+            <label class="flavor-pill">
+              <input type="checkbox" name="cake6_round" value="Round Cake">
+              <span class="pill-dot"></span><span id="flCake6Round">Round Cake</span>
+            </label>
+          </div>
+        </div>
+        <div class="qty-row">
+          <span class="qty-label-sm" id="lblQtyCake6">Qty:</span>
+          <div class="qty-stepper">
+            <button type="button" class="qty-btn" onclick="changeQty('cake6',-1)">−</button>
+            <div class="qty-val" id="qtyValCake6">0</div>
+            <button type="button" class="qty-btn" onclick="changeQty('cake6',1)">+</button>
+          </div>
+        </div>
+        <p style="font-size:0.72rem;color:var(--muted);margin-top:0.6rem;" id="cake6Note">Feeds 8–10 people · Includes buttercream</p>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="order-summary" id="summaryBox" style="display:none;">
+        <div class="summary-title" id="summaryTitle">Order Summary</div>
+        <div id="summaryLines"></div>
+        <hr class="summary-divider">
+        <div class="summary-total">
+          <span id="totalLabel">Order Total</span>
+          <span id="totalAmt">$0.00</span>
+        </div>
+        <div class="deposit-box">
+          <div class="deposit-row">
+            <span class="deposit-label" id="depositLabel">50% Deposit Due via Zelle</span>
+            <span class="deposit-amt" id="depositAmt">$0.00</span>
+          </div>
+          <div class="deposit-note" id="depositNote">Non-refundable · Required to confirm your order</div>
+        </div>
+      </div>
+      <div class="empty-cart" id="emptyCart"><span id="emptyCartTxt">Select items above to see your total</span></div>
+
+      <!-- Notes -->
+      <div class="field" style="margin-top:1rem;">
+        <label id="lblNotes">Special Instructions / Allergies</label>
+        <textarea name="notes" id="inNotes" placeholder="Dietary restrictions, design notes, occasion details…"></textarea>
+      </div>
+    </div>
+
+    <!-- Success -->
+    <div id="success-msg" class="card">
+      <div class="icon">🎀</div>
+      <h2 id="successTitle">Order Received!</h2>
+      <p id="successBody">Thank you so much for choosing Glo &amp; Elle Bakehouse!<br>A confirmation email with your order details and Zelle deposit instructions is on its way.</p>
+      <div class="conf-badge" id="confNumDisplay"></div>
+      <div class="deposit-confirm" id="depositConfirmBox">
+        <div class="dc-title" id="dcTitle">Deposit Due</div>
+        <div class="dc-amt"   id="dcAmt"></div>
+        <div class="dc-note"  id="dcNote">Send via Zelle to [YOUR_ZELLE_INFO] — include your confirmation # in the memo. Non-refundable.</div>
+      </div>
+      <p style="margin-top:1rem;font-size:0.82rem;">
+        <span id="successDM">Questions? DM us on Instagram</span>
+        <a href="https://www.instagram.com/glo.and.elle" target="_blank" style="color:var(--berry);font-weight:500;"> @glo.and.elle</a>
+      </p>
+    </div>
+
+    <button type="submit" class="btn-submit" id="submitBtn">
+      <span id="btnText">Submit Order</span>
+      <div class="spinner" id="spinner"></div>
+    </button>
+    <p class="fine-print" id="finePrint">
+      By submitting you agree to our deposit policy.<br>Deposits are non-refundable. Your order is confirmed only after deposit is received.
+    </p>
+
+  </form>
+</div>
+
+<footer>
+  © 2026 Glo &amp; Elle Bakehouse &nbsp;·&nbsp;
+  <a href="https://www.instagram.com/glo.and.elle" target="_blank">@glo.and.elle</a>
+</footer>
+
+<script>
+const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+// ── Menu prices ────────────────────────────────────────────
+const PRICES = { bento: 14, loaf: 7, cake6: 50 };
+const qty    = { bento: 0,  loaf: 0, cake6: 0  };
+
+// ── Pill toggle — driven by checkbox change, no onclick conflict ──
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.flavor-pill input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      cb.closest('.flavor-pill').classList.toggle('selected', cb.checked);
+      updateSummary();
+    });
+  });
+});
+
+// ── Qty stepper ────────────────────────────────────────────
+function changeQty(item, delta) {
+  qty[item] = Math.max(0, qty[item] + delta);
+  document.getElementById('qtyVal' + capitalize(item)).textContent = qty[item];
+  updateSummary();
+}
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// ── Summary ────────────────────────────────────────────────
+function updateSummary() {
+  const lang = currentLang;
+  const t    = T[lang];
+  const lines = [];
+
+  if (qty.bento > 0) {
+    const flavors = getSelectedFlavors('flavorsBento');
+    const sub = qty.bento * PRICES.bento;
+    lines.push({ name: `${T[lang].nameBento}${flavors ? ' (' + flavors + ')' : ''} × ${qty.bento}`, amt: sub });
+  }
+  if (qty.loaf > 0) {
+    const sub = qty.loaf * PRICES.loaf;
+    lines.push({ name: `${T[lang].nameLoaf} × ${qty.loaf}`, amt: sub });
+  }
+  if (qty.cake6 > 0) {
+    const flavors = getSelectedFlavors('flavorsCake6');
+    const sub = qty.cake6 * PRICES.cake6;
+    lines.push({ name: `${T[lang].nameCake6}${flavors ? ' (' + flavors + ')' : ''} × ${qty.cake6}`, amt: sub });
+  }
+
+  const summaryBox  = document.getElementById('summaryBox');
+  const emptyCart   = document.getElementById('emptyCart');
+  const summaryLines= document.getElementById('summaryLines');
+  const totalAmt    = document.getElementById('totalAmt');
+  const depositAmt  = document.getElementById('depositAmt');
+
+  if (lines.length === 0) {
+    summaryBox.style.display = 'none';
+    emptyCart.style.display  = 'block';
+    return;
+  }
+
+  summaryBox.style.display = 'block';
+  emptyCart.style.display  = 'none';
+
+  summaryLines.innerHTML = lines.map(l =>
+    `<div class="summary-line"><span class="s-name">${l.name}</span><span class="s-amt">$${l.amt.toFixed(2)}</span></div>`
+  ).join('');
+
+  const total   = lines.reduce((a, l) => a + l.amt, 0);
+  const deposit = total * 0.5;
+  totalAmt.textContent  = '$' + total.toFixed(2);
+  depositAmt.textContent= '$' + deposit.toFixed(2);
+}
+
+function getSelectedFlavors(groupId) {
+  const checked = document.querySelectorAll(`#${groupId} input[type=checkbox]:checked`);
+  return Array.from(checked).map(c => c.value).join(', ');
+}
+
+function getOrderTotal() {
+  return qty.bento * PRICES.bento + qty.loaf * PRICES.loaf + qty.cake6 * PRICES.cake6;
+}
+
+// ── Language ───────────────────────────────────────────────
+let currentLang = 'en';
+
+const T = {
+  en: {
+    langLabel:   'Language:',
+    hdrSub:      'Custom Dessert Orders',
+    noticeTitle: 'Deposit Policy:',
+    noticeText:  ' A 50% non-refundable deposit via Zelle is required to confirm your order. Deposit details will be emailed to you after submitting. Orders are not confirmed until deposit is received.',
+    card1Title:  'Your Information',
+    card2Title:  'Choose Your Items',
+    lblName:     'Full Name', lblEmail: 'Email', lblPhone: 'Phone',
+    lblDate:     'Pickup / Delivery Date', lblSource: 'How did you find us?',
+    srcDefault:  'Select one…', srcIG: 'Instagram', srcRef: 'Friend / Referral',
+    srcGoogle:   'Google', srcFB: 'Facebook', srcReturn: 'Returning customer', srcOther: 'Other',
+    lblFlavorBento:  'Flavor(s)', lblFlavorCake6: 'Flavor(s)',
+    flBentoChoc: 'Chocolate', flBentoTL: 'Tres Leches',
+    flCake6TL:   'Tres Leches', flCake6Choc: 'Chocolate', flCake6Round: 'Round Cake',
+    nameBento:   'Bento Cake', nameLoaf: 'Tres Leches Loaf', nameCake6: '6" Cake w/ Gold Topper',
+    lblQtyBento: 'Qty:', lblQtyLoaf: 'Qty:', lblQtyCake6: 'Qty:',
+    cake6Note:   'Feeds 8–10 people · Includes buttercream',
+    lblNotes:    'Special Instructions / Allergies',
+    inNamePH:    'Jane Smith', inEmailPH: 'jane@email.com', inPhonePH: '(555) 555-5555',
+    inNotesPH:   'Dietary restrictions, design notes, occasion details…',
+    summaryTitle: 'Order Summary', totalLabel: 'Order Total',
+    depositLabel: '50% Deposit Due via Zelle', depositNote: 'Non-refundable · Required to confirm your order',
+    emptyCartTxt: 'Select items above to see your total',
+    btnText:      'Submit Order',
+    successTitle: 'Order Received!',
+    successBody:  'Thank you so much for choosing Glo & Elle Bakehouse!<br>A confirmation email with your order details and Zelle deposit instructions is on its way.',
+    successDM:    'Questions? DM us on Instagram',
+    dcTitle:      'Deposit Due',
+    dcNote:       'Send via Zelle — include your confirmation # in the memo. Non-refundable.',
+    finePrint:    'By submitting you agree to our deposit policy.<br>Deposits are non-refundable. Your order is confirmed only after deposit is received.',
+    errMsg:       'Something went wrong. Please try again or DM us @glo.and.elle',
+    confPrefix:   'Confirmation #: ',
+    errNoItems:   'Please add at least one item to your order.',
+    errFlavors:   'Please select a flavor for your ',
+  },
+  es: {
+    langLabel:   'Idioma:',
+    hdrSub:      'Pedidos de Postres Personalizados',
+    noticeTitle: 'Política de Depósito:',
+    noticeText:  ' Se requiere un depósito no reembolsable del 50% por Zelle para confirmar tu pedido. Los detalles del depósito se enviarán a tu correo al enviar el formulario. El pedido no se confirma hasta recibir el depósito.',
+    card1Title:  'Tu Información',
+    card2Title:  'Elige tus Productos',
+    lblName:     'Nombre completo', lblEmail: 'Correo electrónico', lblPhone: 'Teléfono',
+    lblDate:     'Fecha de entrega / recogida', lblSource: '¿Cómo nos encontraste?',
+    srcDefault:  'Selecciona una opción…', srcIG: 'Instagram', srcRef: 'Amigo / Referido',
+    srcGoogle:   'Google', srcFB: 'Facebook', srcReturn: 'Cliente frecuente', srcOther: 'Otro',
+    lblFlavorBento: 'Sabor(es)', lblFlavorCake6: 'Sabor(es)',
+    flBentoChoc: 'Chocolate', flBentoTL: 'Tres Leches',
+    flCake6TL:   'Tres Leches', flCake6Choc: 'Chocolate', flCake6Round: 'Pastel Redondo',
+    nameBento:   'Bento Cake', nameLoaf: 'Pay de Tres Leches', nameCake6: 'Pastel 6" con Topper Dorado',
+    lblQtyBento: 'Cant.:', lblQtyLoaf: 'Cant.:', lblQtyCake6: 'Cant.:',
+    cake6Note:   'Rinde 8–10 personas · Incluye betún',
+    lblNotes:    'Instrucciones especiales / Alergias',
+    inNamePH:    'María García', inEmailPH: 'maria@correo.com', inPhonePH: '(555) 555-5555',
+    inNotesPH:   'Restricciones alimentarias, notas de diseño, detalles de la ocasión…',
+    summaryTitle: 'Resumen del Pedido', totalLabel: 'Total del Pedido',
+    depositLabel: 'Depósito del 50% por Zelle', depositNote: 'No reembolsable · Requerido para confirmar tu pedido',
+    emptyCartTxt: 'Selecciona productos arriba para ver tu total',
+    btnText:      'Enviar Pedido',
+    successTitle: '¡Pedido Recibido!',
+    successBody:  '¡Muchas gracias por elegir Glo & Elle Bakehouse!<br>Te enviaremos un correo con el resumen de tu pedido e instrucciones para el depósito por Zelle.',
+    successDM:    '¿Preguntas? Escríbenos en Instagram',
+    dcTitle:      'Depósito a Enviar',
+    dcNote:       'Envía por Zelle — incluye tu número de confirmación en el memo. No reembolsable.',
+    finePrint:    'Al enviar, aceptas nuestra política de depósito.<br>Los depósitos no son reembolsables. Tu pedido se confirma solo al recibir el depósito.',
+    errMsg:       'Algo salió mal. Por favor intenta de nuevo o escríbenos @glo.and.elle',
+    confPrefix:   'Confirmación #: ',
+    errNoItems:   'Por favor agrega al menos un producto a tu pedido.',
+    errFlavors:   'Por favor selecciona un sabor para tu ',
+  }
+};
+
+function setLang(l) {
+  currentLang = l;
+  const t = T[l];
+  document.documentElement.lang = l;
+  document.getElementById('btnEN').classList.toggle('active', l === 'en');
+  document.getElementById('btnES').classList.toggle('active', l === 'es');
+
+  // Text nodes
+  setText('langLabel',   t.langLabel);
+  setText('hdrSub',      t.hdrSub);
+  setText('noticeTitle', t.noticeTitle);
+  setText('noticeText',  t.noticeText);
+  setText('card1Title',  '♥ ' + t.card1Title);
+  setText('card2Title',  '♥ ' + t.card2Title);
+
+  setLabel('lblName',   t.lblName,  true);
+  setLabel('lblEmail',  t.lblEmail, true);
+  setLabel('lblPhone',  t.lblPhone, true);
+  setLabel('lblDate',   t.lblDate,  true);
+  setText('lblSource',  t.lblSource);
+  setLabel('lblFlavorBento', t.lblFlavorBento, false);
+  setLabel('lblFlavorCake6', t.lblFlavorCake6, false);
+  setLabel('lblNotes',  t.lblNotes, false);
+
+  setText('lblQtyBento', t.lblQtyBento);
+  setText('lblQtyLoaf',  t.lblQtyLoaf);
+  setText('lblQtyCake6', t.lblQtyCake6);
+
+  setText('flBentoChoc',  t.flBentoChoc);
+  setText('flBentoTL',    t.flBentoTL);
+  setText('flCake6TL',    t.flCake6TL);
+  setText('flCake6Choc',  t.flCake6Choc);
+  setText('flCake6Round', t.flCake6Round);
+
+  setText('nameBento', t.nameBento);
+  setText('nameLoaf',  t.nameLoaf);
+  setText('nameCake6', t.nameCake6);
+  setText('cake6Note', t.cake6Note);
+
+  setText('srcDefault', t.srcDefault);
+  setText('srcIG',      t.srcIG);
+  setText('srcRef',     t.srcRef);
+  setText('srcGoogle',  t.srcGoogle);
+  setText('srcFB',      t.srcFB);
+  setText('srcReturn',  t.srcReturn);
+  setText('srcOther',   t.srcOther);
+
+  setText('summaryTitle', t.summaryTitle);
+  setText('totalLabel',   t.totalLabel);
+  setText('depositLabel', t.depositLabel);
+  setText('depositNote',  t.depositNote);
+  setText('emptyCartTxt', t.emptyCartTxt);
+
+  setPlaceholder('inName',  t.inNamePH);
+  setPlaceholder('inEmail', t.inEmailPH);
+  setPlaceholder('inPhone', t.inPhonePH);
+  setPlaceholder('inNotes', t.inNotesPH);
+
+  setText('btnText',      t.btnText);
+  setText('successTitle', t.successTitle);
+  document.getElementById('successBody').innerHTML = t.successBody;
+  setText('successDM',    t.successDM);
+  setText('dcTitle',      t.dcTitle);
+  setText('dcNote',       t.dcNote);
+  document.getElementById('finePrint').innerHTML = t.finePrint;
+
+  updateSummary();
+}
+
+function setText(id, val)        { const el = document.getElementById(id); if (el) el.textContent = val; }
+function setPlaceholder(id, val) { const el = document.getElementById(id); if (el) el.placeholder  = val; }
+function setLabel(id, text, required) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text + ' ';
+  if (required) { const s = document.createElement('span'); s.className='req'; s.textContent='*'; el.appendChild(s); }
+}
+
+// ── Form submit ────────────────────────────────────────────
+const form       = document.getElementById('orderForm');
+const submitBtn  = document.getElementById('submitBtn');
+const btnTextEl  = document.getElementById('btnText');
+const spinner    = document.getElementById('spinner');
+const successMsg = document.getElementById('success-msg');
+const confDisplay= document.getElementById('confNumDisplay');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const t = T[currentLang];
+
+  // Validate: at least one item
+  if (qty.bento === 0 && qty.loaf === 0 && qty.cake6 === 0) {
+    alert(t.errNoItems); return;
+  }
+  // Validate: flavors selected for items with qty > 0
+  if (qty.bento > 0 && !getSelectedFlavors('flavorsBento')) {
+    alert(t.errFlavors + t.nameBento); return;
+  }
+  if (qty.cake6 > 0 && !getSelectedFlavors('flavorsCake6')) {
+    alert(t.errFlavors + t.nameCake6); return;
+  }
+  // Validate required fields
+  const name  = document.getElementById('inName').value.trim();
+  const email = document.getElementById('inEmail').value.trim();
+  const phone = document.getElementById('inPhone').value.trim();
+  const date  = document.getElementById('inDate').value;
+  if (!name || !email || !phone || !date) {
+    const fields = [
+      !name  ? t.lblName  : '',
+      !email ? t.lblEmail : '',
+      !phone ? t.lblPhone : '',
+      !date  ? t.lblDate  : '',
+    ].filter(Boolean).join(', ');
+    alert((currentLang==='en'?'Please fill in: ':'Por favor completa: ') + fields);
+    return;
+  }
+
+  btnTextEl.style.display = 'none';
+  spinner.style.display   = 'block';
+  submitBtn.disabled      = true;
+
+  const total   = getOrderTotal();
+  const deposit = total * 0.5;
+
+  const orderItems = [];
+  if (qty.bento > 0) orderItems.push(`Bento Cake (${getSelectedFlavors('flavorsBento')}) x${qty.bento} = $${(qty.bento*14).toFixed(2)}`);
+  if (qty.loaf  > 0) orderItems.push(`Tres Leches Loaf x${qty.loaf} = $${(qty.loaf*7).toFixed(2)}`);
+  if (qty.cake6 > 0) orderItems.push(`6" Cake w/ Gold Topper (${getSelectedFlavors('flavorsCake6')}) x${qty.cake6} = $${(qty.cake6*50).toFixed(2)}`);
+
+  const data = {
+    name, email, phone, date,
+    source:   document.getElementById('inSource').value,
+    notes:    document.getElementById('inNotes').value,
+    language: currentLang,
+    orderItems: orderItems.join(' | '),
+    orderTotal:   '$' + total.toFixed(2),
+    depositDue:   '$' + deposit.toFixed(2),
+  };
+
+  try {
+    const res    = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
+    const result = await res.json();
+    if (result.status === 'ok') {
+      form.querySelectorAll('.card:not(#success-msg)').forEach(c => c.style.display = 'none');
+      submitBtn.style.display = 'none';
+      document.getElementById('finePrint').style.display = 'none';
+      successMsg.style.display = 'block';
+      confDisplay.textContent  = t.confPrefix + result.confirmationNumber;
+      document.getElementById('dcAmt').textContent = '$' + deposit.toFixed(2);
+      successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      throw new Error(result.message || 'error');
+    }
+  } catch (err) {
+    alert(t.errMsg);
+    btnTextEl.style.display = 'block';
+    spinner.style.display   = 'none';
+    submitBtn.disabled      = false;
+  }
+});
+</script>
+</body>
+</html>
